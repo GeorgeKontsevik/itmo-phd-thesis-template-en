@@ -94,7 +94,7 @@ Melkote, S., & Daskin, M. S. (2001). An integrated model of facility location an
 
 ---
 
-## Схема классификации facility location models
+## Схема классификации facility location + network design models
 
 Базовая форма взята из Figure 1 у Dybskaya & Sverchkov (2017): классификация facility location models [28]. Сохраняем исходную логику схемы, но раскрываем узел `Network models`, потому что именно он связывает классические FLP с рассмотренными работами по FLND/TNDP.
 
@@ -149,3 +149,13 @@ flowchart TB
 | 2022, 2026 | Многоуровневость и созависимость слоев | Транспортная сеть может рассматриваться как multilayer system, где виды транспорта образуют связанные слои; несогласованность между слоями multimodal mobility может снижать эффективность и доступность перемещений. | [29], [30], [31] |
 | 2025 | Топология сети | Перед оптимизацией нужно оценивать connectivity, centrality и тип структуры сети, потому что grid/ring/radial структуры дают разные location-allocation результаты. | [26] |
 | 2026 | Сеть и городская ткань | Эффект сетевых улучшений зависит от urban structure types: районы с разной морфологией имеют разные профили pedestrian x-minuteness. | [27] |
+
+### Связь расширения network design с работами из Zotero MINE
+
+| Часть работы | Узел схемы | Как используется |
+| --- | --- | --- |
+| 1.1 | `Road networks` -> `Link quality` | Внешняя среда меняет состояние сети: ребра могут появляться/исчезать, а service catchments перераспределяются. |
+| 1.2 | `Road networks` -> `Link quality` | Climate stressors переводятся в изменение параметров/доступности дорожных ребер; это основа для equatorial supply-chain экспериментов. |
+| 2.1 | `Transport networks` | Размещение сервисов рассматривается вместе с изменяемой транспортной доступностью: можно сравнивать новые сервисы, улучшение связей и изменение спроса. |
+| 2.2 | `Transport networks` -> `Public transit network and fares` | TNDP расширяет транспортную ветку: сеть ОТ можно проектировать с учетом connectivity/accessibility objective. |
+| support 2.1 | `Transport networks` | Spatial-morphological imputation используется как механизм роста demand при изменении land use; SPB-эксперимент сравнивает этот рост с эффектом добавления дороги. |
