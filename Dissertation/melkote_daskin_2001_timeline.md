@@ -103,8 +103,9 @@ flowchart TB
     FL["Facility Location models"]
     FL --> QL["Qualitative models"]
     FL --> QT["Quantitative models"]
+    FL <-.-> NM["Network models [extension]"]
+    linkStyle 2 stroke-width:4px,stroke-dasharray:14 10
 
-    QT --> NM["Network models"]
     QT --> CM["Continuous models"]
     QT --> DM["Discrete models"]
 
@@ -126,8 +127,9 @@ flowchart TB
     MILP --> DIM["Model dimensions:<br/>capacitated/uncapacitated<br/>single/multi-layer<br/>single/multi-product<br/>single/multiple period<br/>single/multi-objective"]
 
     NM --> FLND["Facility location + network design"]
-    FLND --> TN["Transport networks"]
     FLND --> RN["Road networks"]
+    RN <-.-> TN["Transport networks"]
+    linkStyle 20 stroke-width:4px,stroke-dasharray:14 10
     RN --> TOP["Network topology and urban structure"]
     TN --> LP["Link parameters"]
     RN --> LQ["Link quality"]
