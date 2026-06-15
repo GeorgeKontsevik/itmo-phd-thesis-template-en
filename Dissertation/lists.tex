@@ -1,10 +1,10 @@
 \clearpage
-\ifdefmacro{\microtypesetup}{\microtypesetup{protrusion=false}}{} % не рекомендуется применять пакет микротипографики к автоматически генерируемым спискам
-\listoffigures  % Список изображений
+\renewcommand{\listfigurename}{Список рисунков}
+\renewcommand{\listtablename}{Список таблиц}
+\ifdefmacro{\microtypesetup}{\microtypesetup{protrusion=false}}{}
+\listoffigures
 
-%%% Список таблиц %%%
-% (ГОСТ Р 7.0.11-2011, 5.3.10)
 \clearpage
-\listoftables   % Список таблиц
+\listoftables
 \ifdefmacro{\microtypesetup}{\microtypesetup{protrusion=true}}{}
 \newpage

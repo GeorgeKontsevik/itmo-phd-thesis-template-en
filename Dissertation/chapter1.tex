@@ -1,63 +1,35 @@
-\chapter{Random}
-\label{ch:ch1}
+\chapter{Проблемно-классификационный анализ задачи размещения объектов обслуживания населения с учетом изменчивости транспортной доступности}
+\label{ch:problem-analysis}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.6\linewidth]{images/knuth}
-    \caption{Knuth}
-    \label{fig:my_label4}
-\end{figure}
+\section{Размещение объектов обслуживания населения как задача территориального планирования}
+\label{sec:service-placement-planning}
 
+\section{Доступность как связанная характеристика застройки и транспорта}
+\label{sec:accessibility-built-transport}
 
-\section{Refs}
+\section{Существующие методы оптимального размещения объектов обслуживания}
+\label{sec:existing-location-methods}
 
-\cite{Grez2022Jul}
+\subsection{Модели set covering location problem}
+\label{subsec:set-covering-location}
 
-\section{Units}\label{sec:units}
+\subsection{Методы добавления новых объектов обслуживания}
+\label{subsec:new-service-methods}
 
-Числа форматируются при помощи команды \verb|\num|:
-\num{5,3};
-\num{2,3e8};
-\num{12345,67890};
-\num{2,6 d4};
-\num{1+-2i};
-\num{.3e45};
-\num[exponent-base=2]{5 e64};
-\num[exponent-base=2,exponent-to-prefix]{5 e64};
-\num{1.654 x 2.34 x 3.430}
-\num{1 2 x 3 / 4}.
+\subsection{Ограничения методов, рассматривающих спрос и транспортную сеть как константы}
+\label{subsec:constant-demand-network}
 
+\section{Изменчивость транспортной доступности как предмет исследования}
+\label{sec:transport-accessibility-variability}
 
-Обратите внимание, что ГОСТ запрещает использование знака <<->> для обозначения отрицательных чисел
-за исключением формул, таблиц и~рисунков.
-Вместо него следует использовать слово <<минус>>.
+\subsection{Разрушение транспортных связей под воздействием внешних факторов}
+\label{subsec:network-disruption}
 
-Размерности можно записывать при помощи команд \verb|\si| и \verb|\SI|:
-\si{\farad\squared\lumen\candela};
-\si{\joule\per\mole\per\kelvin};
-\si[per-mode = symbol-or-fraction]{\joule\per\mole\per\kelvin};
-\si{\metre\per\second\squared};
-\SI{0.10(5)}{\neper};
-\SI{1.2-3i e5}{\joule\per\mole\per\kelvin};
-\SIlist{1;2;3;4}{\tesla};
-\SIrange{50}{100}{\volt}.
+\subsection{Улучшение транспортных связей как управляемая интервенция}
+\label{subsec:network-improvement}
 
-\begin{table}
-    \centering
-    \captionsetup{justification=centering} % выравнивание подписи по-центру
-    \caption{Основные величины СИ}\label{tab:unit:base}
-    \begin{tabular}{llc}
-        \toprule
-        Название  & Команда                 & Символ         \\
-        \midrule
-        Ампер     & \verb|\ampere| & \si{\ampere}   \\
-        Кандела   & \verb|\candela| & \si{\candela}  \\
-        Кельвин   & \verb|\kelvin| & \si{\kelvin}   \\
-        Килограмм & \verb|\kilogram| & \si{\kilogram} \\
-        Метр      & \verb|\metre| & \si{\metre}    \\
-        Моль      & \verb|\mole| & \si{\mole}     \\
-        Секунда   & \verb|\second| & \si{\second}   \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+\subsection{Методы и алгоритмы поддержки принятия решений по обеспечению транспортной доступности}
+\label{subsec:decision-support-accessibility}
 
+\section{Выводы по главе}
+\label{sec:chapter1-conclusions}
