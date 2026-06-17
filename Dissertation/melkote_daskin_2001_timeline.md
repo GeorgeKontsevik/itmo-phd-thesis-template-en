@@ -9,6 +9,16 @@ Melkote, S., & Daskin, M. S. (2001). An integrated model of facility location an
 - Zotero item: `NN4ASPN7`
 - PDF attachment: `/Users/gk/Zotero/storage/IC6GWNET/Melkote and Daskin - 2001 - An integrated model of facility location and transportation network design.pdf`
 
+## Визуальный таймлайн
+
+![Таймлайн: facility location + transportation network design](./facility_location_tnd_timeline.png)
+
+Логика схемы - не один линейный ряд, а три сходящихся потока:
+
+- `Facility location`: от классических FLP и covering models к работам, где сеть перестает быть только заданной средой расчета.
+- `Transport / network design`: от самостоятельных моделей проектирования транспортной сети и link construction к задачам, где изменение сети сравнивается с открытием новых объектов.
+- `Multilayer networks`: от multimodal mobility к multilayer/interdependent network framework, который позволяет описывать связанные транспортные слои.
+
 ## Схема
 
 | Период | Этап исследовательского развития | Ссылки |
@@ -98,44 +108,7 @@ Melkote, S., & Daskin, M. S. (2001). An integrated model of facility location an
 
 Базовая форма взята из Figure 1 у Dybskaya & Sverchkov (2017): классификация facility location models [28]. Сохраняем исходную логику схемы, но раскрываем узел `Network models`, потому что именно он связывает классические FLP с рассмотренными работами по FLND/TNDP.
 
-```mermaid
-flowchart TB
-    FL["Facility Location models"]
-    FL --> QL["Qualitative models"]
-    FL --> QT["Quantitative models"]
-    FL <-.-> NM["Network models [extension]"]
-    linkStyle 2 stroke-width:4px,stroke-dasharray:14 10
-
-    QT --> CM["Continuous models"]
-    QT --> DM["Discrete models"]
-
-    CM --> AD["Models with Analytical Demand Distribution"]
-    CM --> ED["Models with Exact Demand Distribution"]
-    AD -.-> GOWA["• GOWA model"]
-    ED --> CB["Covering-based models"]
-    ED --> MB["Median-based models"]
-
-    CB --> SC["Set Covering"]
-    CB --> MC["Max Covering"]
-    CB --> PC["P-Center"]
-    MB --> PM["P-Median"]
-    MB --> FC["Fixed Charge"]
-
-    DM --> MILP["MILP models"]
-    DM --> MINLP["MINLP models"]
-
-    MILP --> DIM["Model dimensions:<br/>capacitated/uncapacitated<br/>single/multi-layer<br/>single/multi-product<br/>single/multiple period<br/>single/multi-objective"]
-
-    NM --> FLND["Facility location + network design"]
-    FLND --> RN["Road networks"]
-    RN <-.-> TN["Transport networks"]
-    linkStyle 20 stroke-width:4px,stroke-dasharray:14 10
-    RN --> TOP["Network topology and urban structure"]
-    TN --> LP["Link parameters"]
-    RN --> LQ["Link quality"]
-    LP --> PT["Public transit network and fares"]
-    LQ --> ML["Multilayer and interdependent networks"]
-```
+![Схема классификации facility location + network design models](./facility_location_network_design_classification.png)
 
 ### Расширенная секция: network / network design
 
