@@ -4,7 +4,259 @@
 \section{Эксперимент по оценке сезонной транспортной доступности}
 \label{sec:seasonal-accessibility-experiment}
 
+\subsection{Эксперимент для экваториальных цепочек поставок}
+\label{subsec:equatorial-results}
 
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=1\linewidth]{ch4/equator_belt_map_ru}
+    \caption{Страны, рассматриваемые в экваториальном эксперименте: пояс в пределах 700 км от экватора; штриховкой отмечены проблемы входных дорожных или сельскохозяйственных данных.}
+    \label{fig:equatorial-belt-map}
+\end{figure}
+
+\begin{figure}[!t]
+    \centering
+    \begin{subfigure}[t]{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{ch4/lbr_crop_distribution}
+        \caption{Распределение культур}
+    \end{subfigure}
+
+    \vspace{0.4em}
+    \begin{subfigure}[t]{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{ch4/lbr_crop_clusters_nodes}
+        \caption{Кластеры культур и узлы сети}
+    \end{subfigure}
+
+    \vspace{0.4em}
+    \begin{subfigure}[t]{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{ch4/lbr_crop_destinations_by_type}
+        \caption{Дорожные ребра и пункты назначения}
+    \end{subfigure}
+    \caption{Пример входных пространственных слоев для Либерии: распределение культур, crop clusters, узлы сети, дорожные ребра и пункты назначения.}
+    \label{fig:lbr-country-inputs}
+\end{figure}
+
+\paragraph{Входные данные и метод расчета для экваториального эксперимента.}
+\begingroup
+\small
+%Экваториальный расчет использует активный full-year 2024 / 700 km crop accessibility workflow. Текущий pipeline состоит из трех шагов: raw data fetch for the equatorial 700 km country belt; road-level multisource overlay construction; crop-origin candidate build, baseline-connected origin selection, and weekly accessibility calculation.
+%
+%Текущий финальный pipeline для equatorial crop accessibility runs задает следующий scope:
+%\begin{itemize}
+%    \item источник crop origins --- CROPGRIDS-derived \texttt{eq.crop\_origin\_candidates};
+%    \item SPAM crop origins в этом запуске не используются;
+%    \item страны без crop candidates, например \texttt{GNQ}, не запускаются;
+%    \item current standard OD scope: all stored crop-cluster terminals per crop, not top-N filtering; 10 nearest small cities, population 5k--100k; 3 nearest large cities, population 100k+; 3 nearest in-country ports; 3 nearest in-country airports;
+%    \item current scenario --- \texttt{weekly\_sum\_penalty\_v1};
+%    \item current result scope --- \texttt{cluster\_connected\_allclusters\_}\\
+%    \texttt{10small\_3large\_3ports\_3airports}.
+%\end{itemize}
+
+%Для расчета используется DB-first workflow: roads in PostGIS, ERA5 weekly precipitation by cell, road-to-cell mapping, cell-level boxplots, crop origins, cities, pgRouting graph, and weekly crop accessibility. Входные слои и промежуточные таблицы фиксируются следующим образом:
+%\begin{itemize}
+%    \item country road table pattern --- \texttt{public.road\_surface\_<iso\_lower>};
+%    \item ERA5 raw files --- local NetCDF files under \texttt{equatorial/data/raw/era5/};
+%    \item crop rasters --- \texttt{equatorial/spam\_tifs/};
+%    \item cities source --- \texttt{equatorial/data/raw/cities/global/cities500.zip}.
+%\end{itemize}
+
+%Weekly ERA5 precipitation grid загружается не как hourly ERA5 в Postgres, а как weekly ERA5 cell aggregates. Таблица \texttt{eq.era5\_precip\_weekly\_grid} содержит поля \texttt{country\_code}, \texttt{week\_start}, \texttt{cell\_id}, \texttt{cell\_lon}, \texttt{cell\_lat}, \texttt{tp\_sum\_weekly\_mm}, \texttt{tp\_mean\_hourly\_mm}, \texttt{tp\_median\_hourly\_mm}, \texttt{tp\_1h\_max\_mm\_per\_h} и generated \texttt{geometry}. В реализации используется только \texttt{tp} from each monthly NetCDF; ERA5 accumulated precipitation converted from meters to hourly increments in mm; weekly metrics are sum of hourly increments, mean hourly increment, median hourly increment, and max hourly increment. If a cell is all-NaN for a week, all metrics are set to \texttt{NULL}, including weekly sum.
+%
+%Дорожные ребра сопоставляются с ERA5 cells через таблицу \texttt{eq.road\_era5\_cell\_map}: one row per road, assigning \texttt{road\_row\_id} to nearest/snapped ERA5 cell. Probe point rule used: for \texttt{LineString} --- midpoint; for \texttt{MultiLineString} --- midpoint of longest part.
+%
+%Crop origin candidates задаются таблицей \texttt{eq.crop\_origin\_candidates}. Источник: \texttt{equatorial/spam\_tifs/spam2010V2r0\_global\_H\_*\_A.tif}. Rules used: clip/mask raster to GADM country boundary; keep positive harvested area cells; select top 100 cells per crop by harvested area.
+%
+%В текущем cluster-connected pipeline каждый crop-cluster point is a graph node and starts as its own component. It is not filtered out by distance to roads and is not snapped directly to the nearest road as a special one-off rule. The \texttt{cluster\_connected} graph is built by taking the raw \texttt{road\_graph} components plus crop terminal components and connecting nearest components iteratively. Synthetic connector links are marked as \texttt{surface\_group = unpaved\_synthetic\_line}. For precipitation penalty handling, all unpaved-like classes, including \texttt{unpaved\_synthetic\_line}, are treated as unpaved.
+%
+%Базовый road graph строится в pgRouting. Base edge rules: exclude non-truck highway classes \texttt{footway}, \texttt{path}, \texttt{steps}, \texttt{pedestrian}, \texttt{cycleway}, \texttt{bridleway}, \texttt{living\_street}; split \texttt{MultiLineString} with \texttt{ST\_Dump}; node key is rounded endpoint coordinate hash; length is computed as \texttt{ST\_Length(geometry::geography) / 1000.0}. Baseline speeds: motorway/link --- 90; trunk/link --- 80; primary/link --- 70; secondary/link --- 60; tertiary/link --- 50; unclassified/residential --- 35; service --- 25; track --- 20; other --- 30. Surface multiplier: paved --- 1.0; unpaved --- 0.75; unknown --- 0.85.
+%
+%Scenario semantics for \texttt{weekly\_sum\_penalty\_v1}: ERA5 input --- \texttt{eq.era5\_precip\_weekly\_grid.tp\_sum\_weekly\_mm}; penalty lookup table --- \texttt{eq.weekly\_rain\_speed\_penalty\_rules}. Road surface handling: \texttt{surface\_group = paved} uses paved rainfall penalties; \texttt{surface\_group = unpaved} uses unpaved rainfall penalties; \texttt{surface\_group = unknown}, \texttt{NULL}, and any other non-paved value are treated as unpaved; \texttt{surface\_group = synthetic\_connector} has no rainfall penalty and multiplier stays 1.0.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Weekly rain speed multipliers in \texttt{weekly\_sum\_penalty\_v1}.}
+    \label{tab:equatorial-weekly-rain-speed-multipliers}
+    \begin{tabular}{llcl}
+        \toprule
+        road\_type & weekly rain mm & multiplier & effect \\
+        \midrule
+        paved & 0--50 & 1.00 & no penalty \\
+        paved & 50--100 & 0.90 & minor speed reduction \\
+        paved & 100--200 & 0.75 & slowed \\
+        paved & 200--300 & 0.40 & flood/damage risk \\
+        paved & >=300 & 0.05 & effectively closed \\
+        unpaved & 0--50 & 1.00 & no penalty \\
+        unpaved & 50--100 & 0.70 & slowed \\
+        unpaved & 100--150 & 0.45 & strongly slowed \\
+        unpaved & 150--250 & 0.20 & severe degradation / low reliability \\
+        unpaved & >=250 & 0.05 & effectively closed \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+\endgroup
+
+\begin{figure}[p]
+    \centering
+    \begin{minipage}[t]{0.68\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{ch4/lbr_weekly_accessibility_impact_heatmap}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.32\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{ch4/lbr_precip_grid_week_2024_08_19}
+    \end{minipage}
+    \caption{Пример недельной динамики эффекта осадков на доступность для Либерии и готовый слой ERA5-grid для одной недели.}
+    \label{fig:lbr-weekly-accessibility-impact}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \begin{minipage}[t]{0.55\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{ch4/temporal_rain_burden_top12_ru}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.45\linewidth}
+        \centering
+%        \vspace*{1.2cm}
+        \includegraphics[width=\linewidth]{ch4/crop_spearman_transposed_ru}
+    \end{minipage}
+    \caption{Недельные осадки и задержка доступности для 12 стран с наибольшей суммарной задержкой; справа показаны корреляции Спирмена между характеристиками сети и задержкой доступности по культурам.}
+    \label{fig:equatorial-top12-rain-burden-and-spearman}
+\end{figure}
+
+Согласно корреляциям на Рисунке \ref{equatorial-top12-rain-burden-and-spearman} видно, то как положение, так и характеристика элементов сети (в данном случае, качество дорожного покрытия), имеют статистически-значимое (p < 0.05) влияние на уровень деградации сети под действием внешнего влияния.
+
+
+\subsection{Эксперимент для арктической многоуровневой сети}
+\label{subsec:arctic-results}
+
+Эксперимент для арктической системы расселения основан на модели Environment-Framed Network (EFN), предназначенной для анализа сезонной устойчивости сервисной доступности в условиях климатически ограниченной транспортной связности \cite{mineEnvironmentFramedNetworks2026}. В этой постановке транспортная сеть рассматривается как температурно-зависимый каркас, а слои сети задаются потоками населения к конкретным типам услуг. Поэтому изменение доступности анализируется на двух связанных уровнях: через изменение физической достижимости транспортных ребер и через перераспределение OD-потоков к поставщикам услуг.
+
+В статье проверяются две гипотезы: удаленные системы расселения, подверженные климатическому воздействию, демонстрируют сходные изменения сезонной доступности; сезонные климатические переходы вызывают систематическое переключение поставщиков услуг и временную недоступность сервиса. В отличие от классических многоуровневых транспортных сетей, EFN рассматривает транспортные режимы как общий каркас, ограниченный внешней средой, а слои задает как сервисно-специфичные потоки по этому каркасу \cite{mineEnvironmentFramedNetworks2026}.
+
+Для исследования использованы данные OpenStreetMap как источник дорожной и водной инфраструктуры, населенных пунктов и границ регионов. Для получения существующих транспортных связей между удаленными поселениями использовались локальные сайты, группы в социальных сетях и, где это было возможно, интервью с местными жителями. Времена поездок собирались с локальных транспортных сайтов и из материалов региональных транспортных агентств. Температура получена через NASA POWER API: использовались данные температуры воздуха на высоте 2 м с пространственным разрешением 0.5 на 0.625 градуса, доступные с 1982 года.
+
+Ключевое ограничение входных данных связано с их дефицитом. В крупных городах открытые транспортные данные хорошо представлены, но в удаленных регионах, особенно для малых поселений, они ограничены. Поэтому в таких случаях в эксперименте рассматривается не только распад сети как потеря связности узлов, но и изменение числа месяцев, в течение которых отдельный населенный пункт не имеет доступа к требуемому сервису в заданном временном нормативе.
+
+Сами сети представлены как группы связанных городов и поселений в арктическом регионе, соединенных разными видами транспорта. Начальное состояние сети соответствует холодному периоду, наиболее вероятному для Арктики, и относится к началу 1980-х годов, то есть к началу доступного температурного ряда. Состояния сети изменяются помесячно до 2025 года. Каждый год представлен четырьмя сезонами разной длительности, однако состояния сети рассматриваются не по календарным сезонам, а через предельные температуры, превышение которых определяет существование определенного транспортного режима.
+
+В модели ребра являются простыми связями между населенными пунктами и задают время или расстояние между двумя географическими точками. Граф системы расселения может иметь несколько ребер между одной парой узлов, поскольку между двумя населенными пунктами может существовать несколько вариантов перемещения, например автомобиль, лодка или самолет. Каждое ребро имеет транспортный режим и вес в виде времени движения. Для арктических территорий отдельно учитывается сезонная специфика маршрутов: для теплого, холодного и переходного периодов существуют разные типы транспортных связей. Например, автомобильный режим разделяется на связи, существующие круглый год, связи теплого периода и связи холодного периода; в переходный период часть таких связей считается отсутствующей.
+
+Узлы в эксперименте соответствуют городам и поселкам. Для каждого поселения задаются численность населения, число услуг выбранных типов и список транспортных объектов, таких как пристани или аэропорты. Область исследования ограничена системами расселения Евразийской Арктики, поскольку часть конкретных маршрутов была получена из локальных сайтов, новостных лент, местных сообществ и других территориально специфичных источников.
+
+Для систем расселения, как и для городов, применялись ограничения времени доступа к сервису, различающиеся по регионам: для Якутии / Чукотки --- 3 часа, для Ямало-Ненецкого автономного округа --- 1.5 часа, для Мезени --- 1 час, для Северного административного округа --- 3 часа. Поэтому даже существующий маршрут должен удовлетворять временному нормативу, чтобы далее считаться активным ребром в сети.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=.9\linewidth]{ch4/arctic/study_area}
+    \caption{Территории, рассматриваемые в арктическом эксперименте: цветом выделены системы расселения, для которых моделируется сезонная сервисная доступность.}
+    \label{fig:arctic-study-area}
+\end{figure}
+
+%\begin{figure}[p]
+%    \centering
+%    \includegraphics[width=0.9\linewidth]{ch4/arctic/temp_threshold}
+%    \caption{Температурно-зависимые условия доступности транспортных режимов в арктическом эксперименте.}
+%    \label{fig:arctic-temp-threshold}
+%\end{figure}
+
+%В модели рассматривается динамический граф $G(t)=(V,E(t))$, в котором существование ребер зависит от времени и температуры. Возможность существования транспортной связи режима $k$ между поселениями $i$ и $j$ в момент $t$ определяется температурой и задается температурно-зависимой функцией:
+%\[
+%P_{ij}^{k}(t)=
+%\mathbb{P}\!\left(E_{ij}^{k}(t)=1 \mid \tilde{T}_{ij}(t)\right)=
+%\frac{1}{1+\exp\!\left(-\dfrac{\tilde{T}_{ij}(t)-\theta_k}{\beta_k}\right)} .
+%\]
+%Здесь $\tilde{T}_{ij}(t)$ задает эффективную температуру для пары origin--destination, $\theta_k$ --- критический температурный порог для транспортного режима $k$, а $\beta_k$ управляет резкостью перехода между недоступным и доступным режимами. Эта вероятность интерпретируется как вес допустимости транспортного ребра, а не как условие сервисной доступности.
+
+Сервисная доступность оценивается после определения транспортной допустимости. Для каждого региона $r$ максимальное допустимое время поездки $D_r$ отражает региональные нормативы планирования. Поселение $i$ считается связанным с поставщиком услуги $j$ в момент $t$, если существует хотя бы один допустимый путь из доступных транспортных ребер и соответствующее время поездки $\tau_{ij}(t)$ удовлетворяет условию $\tau_{ij}(t)\leq D_r$. Если ни один поставщик не удовлетворяет этому условию, поселение считается изолированным для данного сервиса в момент $t$.
+
+%\begin{figure}[p]
+%    \centering
+%    \begin{minipage}[t]{0.49\linewidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{ch4/arctic/seasonal_network_scheme_transition}
+%    \end{minipage}\hfill
+%    \begin{minipage}[t]{0.49\linewidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{ch4/arctic/seasonal_network_scheme_cold}
+%    \end{minipage}
+%    \caption{Схема перераспределения потоков между сервисными слоями для переходного и холодного сезонов.}
+%    \label{fig:arctic-seasonal-network-scheme}
+%\end{figure}
+
+Результаты представлены на трех взаимодополняющих уровнях: связность сети, сервисно-специфичные назначения потоков и региональные агрегированные показатели. Результаты моделирования показывают, что системы расселения в рассматриваемых арктических регионах демонстрируют разные паттерны уязвимости. Различия связаны с распределением ключевых обслуживающих городов, разнообразием транспортных режимов и высокой зависимостью малых поселений от сезонно нестабильных видов транспорта, таких как водный транспорт или зимники.
+
+Нестабильность сети, вызванная сезонными изменениями температуры, приводит к изменениям отношений ``потребитель--поставщик''. Некоторые поселения могут не иметь связи с поставщиком услуги в течение нескольких месяцев из-за отсутствия транспортных связей, что характерно для удаленных городов и поселков в таких регионах. Моделирование для четырех арктических регионов показывает пороговые сезонные реконфигурации: до 40\% поселений меняют поставщиков услуг, а 15--20\% временно оказываются изолированными на срок до 2--4 месяцев в периоды сезонных переходов.
+
+\begin{figure}[p]
+    \centering
+    \hspace*{-2cm}% сдвиг всего блока влево
+    \begin{minipage}[t]{0.49\linewidth}
+        \centering
+        \includegraphics[width=1.2\linewidth]{ch4/arctic/yanao_kras_multilayer_may}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.49\linewidth}
+        \centering
+        \hspace*{-1cm}% сдвиг всего блока влево
+        \includegraphics[width=1.2\linewidth]{ch4/arctic/yanao_kras_multilayer_aug}
+    \end{minipage}
+    \caption{Сезонные изменения многоуровневых сетевых взаимодействий между маем и августом для Ямало-Ненецкого автономного округа.}
+    \label{fig:arctic-multilayer-seasonal}
+\end{figure}
+
+Существующие ребра на рисунке~\ref{fig:arctic-multilayer-seasonal} различаются по месяцам. Серые связи показывают, существует ли ребро согласно правилу температуры и типа транспорта, а цветные связи показывают маршруты спроса, то есть потенциальный поток от одного поселения к другому в соответствии с потребностью в сервисе. В контексте отношений ``потребитель--поставщик'' неравномерное распределение услуг создает сложные многоуровневые отношения между поселениями.
+
+%\begin{figure}[p]
+%    \centering
+%    \begin{minipage}[t]{0.49\linewidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{ch4/arctic/yanao_kras_marina_flow_may}
+%    \end{minipage}\hfill
+%    \begin{minipage}[t]{0.49\linewidth}
+%        \centering
+%        \includegraphics[width=\linewidth]{ch4/arctic/yanao_kras_marina_flow_aug}
+%    \end{minipage}
+%    \caption{Сезонные изменения маршрутов по типам транспорта между маем и августом для сервиса marina в Ямало-Ненецком автономном округе.}
+%    \label{fig:arctic-marina-flow-months}
+%\end{figure}
+
+На рисунке~\ref{fig:arctic-marina-sankey} видно, что в мае часть малых поселений не связана ни с одним сервисом в заданном временном нормативе. В августе все поселения получают доступ к требуемой услуге, в данном случае к пристани. При этом несколько поселений меняют тип транспортной связи. Например, поселение Хета в мае связано с сервисом marina через зимник, а в августе основную роль в связи с ближайшей пристанью начинает играть водный транспорт. При смене типа транспорта поселение при этом остается связанным с тем же поставщиком услуги.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=1\linewidth]{ch4/arctic/yanao_kras_marina_sankey}
+    \caption{Перераспределение потоков к сервису Порт в Ямало-Ненецком автономном округе.}
+    \label{fig:arctic-marina-sankey}
+\end{figure}
+
+Для каждого месяца поселения группируются по назначенному поставщику услуги, формируя "сервис-специфичные" "зоны покрытия". Эти области представляют собой бассейны распределения, основанные на назначении, а не топологические сообщества, найденные по структуре сети. Временное сходство между соседними месяцами оценивается индексом Жаккара для множеств поселений.
+
+Маршруты доступа для слоя Порт значительно меняются между сезонами. Этот случай показывает нестабильность маршрутов и хрупкость доступа для затронутых поселений. Несмотря на сезонную смену типа транспорта, доступ к выбранному сервису теряют только некоторые поселения. Хотя система нестабильна в глобальном смысле, в октябре она возвращается к исходному состоянию, что указывает на выраженные переходы состояний в рассматриваемом периоде.
+
+%\begin{figure}[p]
+%    \centering
+%    \includegraphics[width=0.9\linewidth]{ch4/arctic/yanao_kras_temporal_evolution}
+%    \caption{Изменение сервисных зон в Ямало-Ненецком автономном округе.}
+%    \label{fig:arctic-temporal-evolution}
+%\end{figure}
+
+Изменения поставщиков, вызванные сезонными изменениями транспорта, показывают смещение сервисных зон. Эта эволюция может быть представлена как матрица who-serves-whom и как полигональная карта сервисных зон. Видно, что меняются и сервисные зоны, и активные поставщики для разных услуг; узлы окрашены по типу объекта, к которому они обеспечивают доступ.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=1\linewidth]{ch4/arctic/yanao_kras_marina_metrics}
+    \caption{Метрики эволюции "зоны покрытия" для сервиса Порт в Ямало-Ненецком автономном округе.}
+    \label{fig:arctic-marina-metrics}
+\end{figure}
+
+Сезонные структурные изменения в сети арктической системы расселения происходят в определенные месяцы, когда переход вызван изменениями температуры. Отношения ``сервис--поставщик'' выглядят более устойчивыми в теплый период, но график событий эволюции "зоны покрытия" показывает разные паттерны перехода из одного состояния в другое между май--июнь и сентябрь--октябрь. Переход от холодного к теплому периоду требует одного шага, тогда как обратный переход занимает два шага: от 8 к 10 сервисным зонам и обратно.
+
+Сравнение региональных режимов в статье показывает, что рассматриваемые регионы различаются по положению, пространственному распределению, административным границам и числу крупных городов с близким доступом. Несмотря на принадлежность к арктическим территориям, они демонстрируют разные паттерны переходов состояний. Для всех четырех регионов --- Мезень, Северный административный округ, Ямало-Ненецкий автономный округ, Якутия / Чукотка --- динамика доступности следует общему сезонному режиму: резкое ухудшение в весенние и осенние переходные месяцы, частичная стабилизация в холодные и теплые плато и восстановление к структурно похожим состояниям после переходов.
+
+В статье отдельно отмечено, что сезонные переходы не являются маргинальными возмущениями, а выступают событиями системной реконфигурации. Пики переключения поставщиков и изоляции синхронизированы с пересечением температурных порогов, а не являются случайными отказами. Переключение поставщиков вызывается потерей допустимости целых транспортных режимов, что вынуждает переназначать OD-потоки даже при сохранении самих поселений.
 
 
 \section{Эксперимент по оптимизации связей в задаче размещения объектов}

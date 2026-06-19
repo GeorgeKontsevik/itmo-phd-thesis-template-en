@@ -46,9 +46,8 @@
 \renewcommand{\tablename}{Таблица}
 \include{Dissertation/syn_ru} % реферат на русском
 
-\renewcommand{\figurename}{Figure}
-\renewcommand{\tablename}{Table}
 \include{Dissertation/syn_en} % реферат на английском
+\input{common/renames}
 \include{Dissertation/introduction}    % Введение
 
 \ifnumequal{\value{contnumfig}}{1}{\counterwithout{figure}{chapter}

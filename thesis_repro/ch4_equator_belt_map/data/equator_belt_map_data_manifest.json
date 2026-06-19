@@ -1,0 +1,19 @@
+{
+  "created_at_utc": "2026-06-19T13:50:06.927985+00:00",
+  "source_generator": "/Users/gk/Code/super-duper-disser/equatorial/scripts/render_equator_belt_road_surface_status_map.py",
+  "geopackage": "/Users/gk/Code/super-duper-disser/itmo-phd-thesis-template-en/thesis_repro/ch4_equator_belt_map/data/equator_belt_map_data.gpkg",
+  "countries": 36,
+  "missing_road_surface": [
+    "FRA",
+    "GHA",
+    "PHL",
+    "THA"
+  ],
+  "no_crop_candidates": [
+    "GNQ"
+  ],
+  "layers": {
+    "world_clip": 107,
+    "selected_countries": 36
+  }
+}

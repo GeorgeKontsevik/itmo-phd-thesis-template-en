@@ -1,0 +1,41 @@
+{
+  "created_at_utc": "2026-06-19T13:48:22.542831+00:00",
+  "source_generator": "equatorial/scripts/render_equator_belt_road_surface_status_map.py",
+  "thesis_copy": "itmo-phd-thesis-template-en/thesis_repro/ch4_equator_belt_map/scripts/render_equator_belt_road_surface_status_map.py",
+  "source_render": "equatorial/outputs/equator_country_belt_road_surface_missing_hatched.png",
+  "command": "equatorial/.venv/bin/python itmo-phd-thesis-template-en/thesis_repro/ch4_equator_belt_map/scripts/render_equator_belt_from_data.py",
+  "x_axis_crop": {
+    "original_xlim": [
+      -180,
+      180
+    ],
+    "new_xlim": [
+      -120,
+      164
+    ],
+    "reason": "Further left-side crop requested; applied as longitude axis limits, not raster crop."
+  },
+  "canvas": {
+    "original_figsize_inches": [
+      20.0,
+      4.2
+    ],
+    "new_figsize_inches": [
+      20.0,
+      6.3
+    ],
+    "dpi": 180,
+    "axis_aspect": "auto",
+    "note": "aspect=auto vertically stretches the map itself."
+  },
+  "outputs": {
+    "repro_output": "itmo-phd-thesis-template-en/thesis_repro/ch4_equator_belt_map/outputs/equator_belt_map_source_xcropped_taller.png",
+    "thesis_image": "itmo-phd-thesis-template-en/images/ch4/equator_belt_map_source_xcropped_taller.png"
+  },
+  "source_data": {
+    "configs": "equatorial/config/generated/full_year_2024_era5_tp_remaining_20260517_203158/*_datasets_2024_full_year.yaml",
+    "natural_earth": "equatorial/.venv/lib/python3.12/site-packages/pyogrio/tests/fixtures/naturalearth_lowres/naturalearth_lowres.shp",
+    "road_surface_presence": "equatorial/data/raw/road_surface/<ISO>/heigit_<iso>_roadsurface_lines.gpkg"
+  },
+  "updated_at_utc": "2026-06-19T13:52:14.790556+00:00"
+}

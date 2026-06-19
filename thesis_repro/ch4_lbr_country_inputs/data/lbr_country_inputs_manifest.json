@@ -1,0 +1,122 @@
+{
+  "created_at_utc": "2026-06-19T14:46:11.860014+00:00",
+  "db_url": "postgresql://gk@127.0.0.1:5432/equatorial",
+  "gadm": "/Users/gk/Code/super-duper-disser/equatorial/data/raw/gadm/LBR/gadm41_LBR.gpkg",
+  "geopackage": "/Users/gk/Code/super-duper-disser/itmo-phd-thesis-template-en/thesis_repro/ch4_lbr_country_inputs/data/lbr_country_inputs.gpkg",
+  "layers": {
+    "boundary": {
+      "rows": 1,
+      "columns": [
+        "GID_0",
+        "COUNTRY",
+        "geometry"
+      ]
+    },
+    "road_edges": {
+      "rows": 45704,
+      "columns": [
+        "edge_id",
+        "country_code",
+        "surface_group",
+        "highway",
+        "length_km",
+        "base_time_h",
+        "geometry"
+      ]
+    },
+    "crop_origin_nodes": {
+      "rows": 97,
+      "columns": [
+        "country_code",
+        "crop_code",
+        "candidate_rank",
+        "harvested_area",
+        "cluster_cell_count",
+        "lon",
+        "lat",
+        "node_id",
+        "node_distance_m",
+        "geometry"
+      ]
+    },
+    "crop_cluster_nodes": {
+      "rows": 97,
+      "columns": [
+        "country_code",
+        "crop_code",
+        "candidate_rank",
+        "harvested_area",
+        "cluster_cell_count",
+        "representative_lon",
+        "representative_lat",
+        "node_id",
+        "node_distance_m",
+        "node_lon",
+        "node_lat",
+        "geometry"
+      ]
+    },
+    "cities_5_100k": {
+      "rows": 21,
+      "columns": [
+        "country_code",
+        "geoname_id",
+        "name",
+        "population",
+        "lon",
+        "lat",
+        "geometry"
+      ]
+    },
+    "cities_100k_plus": {
+      "rows": 1,
+      "columns": [
+        "country_code",
+        "geoname_id",
+        "name",
+        "population",
+        "lon",
+        "lat",
+        "geometry"
+      ]
+    },
+    "ports": {
+      "rows": 1,
+      "columns": [
+        "port_id",
+        "name",
+        "natlscale",
+        "lon",
+        "lat",
+        "geometry"
+      ]
+    },
+    "airports": {
+      "rows": 19,
+      "columns": [
+        "airport_id",
+        "ident",
+        "airport_type",
+        "name",
+        "iso_country",
+        "municipality",
+        "scheduled_service",
+        "iata_code",
+        "lon",
+        "lat",
+        "geometry"
+      ]
+    },
+    "crop_preview_cells": {
+      "rows": 4868,
+      "columns": [
+        "country_code",
+        "crop_code",
+        "harvested_area",
+        "lon",
+        "lat",
+        "geometry"
+      ]
+    }
+  }
+}
