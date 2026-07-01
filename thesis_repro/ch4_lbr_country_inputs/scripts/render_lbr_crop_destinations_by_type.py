@@ -20,6 +20,14 @@ THESIS_DIR = PACKAGE_DIR.parents[1]
 DEFAULT_DATA = PACKAGE_DIR / "data/lbr_country_inputs.gpkg"
 DEFAULT_OUT = PACKAGE_DIR / "outputs/lbr_crop_destinations_by_type.png"
 DEFAULT_THESIS_IMAGE = THESIS_DIR / "images/ch4/lbr_crop_destinations_by_type.png"
+ROAD_LABELS = {"paved": "асфальт", "unpaved": "грунт", "unknown": "неизвестно"}
+PANEL_TITLES = {
+    "roads": "дороги",
+    "cities 5-100k": "города 5-100 тыс.",
+    "cities 100k+": "города 100 тыс.+",
+    "ports": "порты",
+    "airports": "аэропорты",
+}
 
 
 def read_layer(path: Path, layer: str) -> gpd.GeoDataFrame:
@@ -51,21 +59,21 @@ def main() -> None:
     panel_titles = ["roads", "cities 5-100k", "cities 100k+", "ports", "airports"]
     legend_handles = {
         "roads": [
-            Line2D([0], [0], color=road_colors["paved"], linewidth=1.4, label="paved"),
-            Line2D([0], [0], color=road_colors["unpaved"], linewidth=1.4, label="unpaved"),
-            Line2D([0], [0], color=road_colors["unknown"], linewidth=1.4, label="unknown"),
+            Line2D([0], [0], color=road_colors["paved"], linewidth=1.4, label=ROAD_LABELS["paved"]),
+            Line2D([0], [0], color=road_colors["unpaved"], linewidth=1.4, label=ROAD_LABELS["unpaved"]),
+            Line2D([0], [0], color=road_colors["unknown"], linewidth=1.4, label=ROAD_LABELS["unknown"]),
         ],
         "cities 5-100k": [
-            Line2D([0], [0], marker="o", color="none", markerfacecolor="#6f4bc4", markeredgecolor="#2b145e", markersize=6, label="cities 5-100k"),
+            Line2D([0], [0], marker="o", color="none", markerfacecolor="#6f4bc4", markeredgecolor="#2b145e", markersize=6, label=PANEL_TITLES["cities 5-100k"]),
         ],
         "cities 100k+": [
-            Line2D([0], [0], marker="s", color="none", markerfacecolor="#f39c34", markeredgecolor="#8a4a00", markersize=6, label="cities 100k+"),
+            Line2D([0], [0], marker="s", color="none", markerfacecolor="#f39c34", markeredgecolor="#8a4a00", markersize=6, label=PANEL_TITLES["cities 100k+"]),
         ],
         "ports": [
-            Line2D([0], [0], marker="P", color="none", markerfacecolor="#0c6b79", markeredgecolor="#083d45", markersize=6, label="ports"),
+            Line2D([0], [0], marker="P", color="none", markerfacecolor="#0c6b79", markeredgecolor="#083d45", markersize=6, label=PANEL_TITLES["ports"]),
         ],
         "airports": [
-            Line2D([0], [0], marker="^", color="none", markerfacecolor="#2ca25f", markeredgecolor="#145a32", markersize=6, label="airports"),
+            Line2D([0], [0], marker="^", color="none", markerfacecolor="#2ca25f", markeredgecolor="#145a32", markersize=6, label=PANEL_TITLES["airports"]),
         ],
     }
 
@@ -89,7 +97,7 @@ def main() -> None:
         elif title == "airports" and not airports.empty:
             ax.scatter(airports.geometry.x, airports.geometry.y, s=42, c="#2ca25f", marker="^", edgecolors="#145a32", linewidths=0.45, alpha=0.95, zorder=6)
 
-        ax.set_title(title)
+        ax.set_title(PANEL_TITLES.get(title, title))
         ax.set_xlim(minx - pad_x, maxx + pad_x)
         ax.set_ylim(miny - pad_y, maxy + pad_y)
         ax.set_xticks([])
@@ -105,7 +113,7 @@ def main() -> None:
             columnspacing=0.8,
         )
 
-    fig.suptitle("LBR roads and destination nodes by type")
+    fig.suptitle("Либерия: дорожная сеть и точки назначения по типам")
     args.out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.out, dpi=180)
     plt.close(fig)

@@ -21,6 +21,13 @@ DEFAULT_DATA = PACKAGE_DIR / "data/lbr_country_inputs.gpkg"
 DEFAULT_OUT_DIR = PACKAGE_DIR / "outputs"
 DEFAULT_THESIS_IMAGE_DIR = THESIS_DIR / "images/ch4"
 CROP_LAYERS = ["avocado", "banana", "plantain", "mango", "pineapple"]
+CROP_LABELS = {
+    "avocado": "авокадо",
+    "banana": "банан",
+    "plantain": "плантан",
+    "mango": "манго",
+    "pineapple": "ананас",
+}
 
 
 def read_layer(path: Path, layer: str) -> gpd.GeoDataFrame:
@@ -35,6 +42,10 @@ def set_country_extent(ax, boundary: gpd.GeoDataFrame) -> None:
     ax.set_ylim(miny - pad_y, maxy + pad_y)
     ax.set_xticks([])
     ax.set_yticks([])
+
+
+def crop_label(crop: str) -> str:
+    return CROP_LABELS.get(crop, crop)
 
 
 def render_distribution(boundary: gpd.GeoDataFrame, preview: gpd.GeoDataFrame, out_path: Path) -> None:
@@ -54,14 +65,14 @@ def render_distribution(boundary: gpd.GeoDataFrame, preview: gpd.GeoDataFrame, o
                 alpha=0.78,
                 linewidths=0,
             )
-        ax.set_title(crop)
+        ax.set_title(crop_label(crop))
         set_country_extent(ax, boundary)
         if scatter is not None:
             cbar = fig.colorbar(scatter, ax=ax, orientation="horizontal", pad=0.035, fraction=0.055)
             cbar.ax.tick_params(labelsize=6, length=2, pad=1)
-            cbar.set_label("harvested area", fontsize=7, labelpad=1)
+            cbar.set_label("убранная площадь", fontsize=7, labelpad=1)
 
-    fig.suptitle("LBR CROPGRIDS 2020 harvested-area distribution; plotted cells are top positive cells per crop")
+    fig.suptitle("Либерия, CROPGRIDS 2020: распределение убранной площади по культурам")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=180)
     plt.close(fig)
@@ -70,10 +81,10 @@ def render_distribution(boundary: gpd.GeoDataFrame, preview: gpd.GeoDataFrame, o
 def render_clusters_nodes(boundary: gpd.GeoDataFrame, preview: gpd.GeoDataFrame, clusters: gpd.GeoDataFrame, out_path: Path) -> None:
     fig, axes = plt.subplots(1, len(CROP_LAYERS), figsize=(18, 4.9), constrained_layout=True)
     legend_handles = [
-        Line2D([0], [0], marker=".", color="none", markerfacecolor="#7a7a7a", markeredgecolor="#7a7a7a", alpha=0.35, markersize=7, label="crop cells"),
-        Line2D([0], [0], marker="o", color="none", markerfacecolor="none", markeredgecolor="#d7191c", markersize=6, label="cluster cell"),
-        Line2D([0], [0], marker="x", color="#2c7bb6", linestyle="none", markersize=5, label="road node"),
-        Line2D([0], [0], color="#111111", linewidth=0.5, alpha=0.55, label="snap link"),
+        Line2D([0], [0], marker=".", color="none", markerfacecolor="#7a7a7a", markeredgecolor="#7a7a7a", alpha=0.35, markersize=7, label="ячейки культуры"),
+        Line2D([0], [0], marker="o", color="none", markerfacecolor="none", markeredgecolor="#d7191c", markersize=6, label="кластерная ячейка"),
+        Line2D([0], [0], marker="x", color="#2c7bb6", linestyle="none", markersize=5, label="дорожный узел"),
+        Line2D([0], [0], color="#111111", linewidth=0.5, alpha=0.55, label="привязка к узлу"),
     ]
     for ax, crop in zip(axes, CROP_LAYERS, strict=True):
         boundary.boundary.plot(ax=ax, color="#333333", linewidth=0.7)
@@ -106,7 +117,7 @@ def render_clusters_nodes(boundary: gpd.GeoDataFrame, preview: gpd.GeoDataFrame,
             if not node_sub.empty:
                 ax.scatter(node_sub["node_lon"], node_sub["node_lat"], s=22, c="#2c7bb6", marker="x", linewidths=1.0)
 
-        ax.set_title(crop)
+        ax.set_title(crop_label(crop))
         set_country_extent(ax, boundary)
         ax.legend(
             handles=legend_handles,
@@ -119,7 +130,7 @@ def render_clusters_nodes(boundary: gpd.GeoDataFrame, preview: gpd.GeoDataFrame,
             columnspacing=0.55,
         )
 
-    fig.suptitle("LBR CROPGRIDS clusters and snapped road nodes")
+    fig.suptitle("Либерия, CROPGRIDS: кластеры культур и привязанные дорожные узлы")
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=180)
     plt.close(fig)

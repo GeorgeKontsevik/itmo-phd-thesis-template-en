@@ -21,6 +21,48 @@ DEFAULT_OUT = PACKAGE_DIR / "outputs/equator_belt_map_source_xcropped_taller.png
 DEFAULT_THESIS_IMAGE = THESIS_DIR / "images/ch4/equator_belt_map_source_xcropped_taller.png"
 BELT_KM = 700
 BELT_DEG = BELT_KM / 111.32
+COUNTRY_LABELS_RU = {
+    "Angola": "Ангола",
+    "Benin": "Бенин",
+    "Brazil": "Бразилия",
+    "Brunei": "Бруней",
+    "Burundi": "Бурунди",
+    "Cameroon": "Камерун",
+    "Central African\nRepublic": "ЦАР",
+    "Coast": "Кот-д'Ивуар",
+    "Colombia": "Колумбия",
+    "Congo": "Конго",
+    "DR Congo": "ДР Конго",
+    "Ecuador": "Эквадор",
+    "Eq. Guinea": "Экв. Гвинея",
+    "Ethiopia": "Эфиопия",
+    "France\n(French Guiana)": "Франция\n(Гвиана)",
+    "Gabon": "Габон",
+    "Ghana": "Гана",
+    "Guayana": "Гайана",
+    "Indonesia": "Индонезия",
+    "Kenya": "Кения",
+    "Liberia": "Либерия",
+    "Malaysia": "Малайзия",
+    "Nigeria": "Нигерия",
+    "Papua New\nGuinea": "Папуа-\nНовая Гвинея",
+    "Peru": "Перу",
+    "Philippines": "Филиппины",
+    "Rwanda": "Руанда",
+    "Somalia": "Сомали",
+    "South Sudan": "Южный Судан",
+    "Sri Lanka": "Шри-Ланка",
+    "Suriname": "Суринам",
+    "Tanzania": "Танзания",
+    "Thailand": "Таиланд",
+    "Togo": "Того",
+    "Uganda": "Уганда",
+    "Venezuela": "Венесуэла",
+}
+
+
+def country_label_ru(value: str) -> str:
+    return COUNTRY_LABELS_RU.get(value, value)
 
 
 def main() -> None:
@@ -52,15 +94,15 @@ def main() -> None:
         ax=ax, color="#f2d59a", edgecolor="#2f5597", linewidth=1.25, hatch="\\\\\\\\", zorder=4
     )
 
-    ax.axhline(0, color="#e31a1c", linewidth=2.2, label="Equator", zorder=5)
-    ax.axhline(BELT_DEG, color="#1f70c1", linewidth=1.8, linestyle="--", label="+700 km belt edge", zorder=5)
-    ax.axhline(-BELT_DEG, color="#1f70c1", linewidth=1.8, linestyle="--", label="-700 km belt edge", zorder=5)
+    ax.axhline(0, color="#e31a1c", linewidth=2.2, label="Экватор", zorder=5)
+    ax.axhline(BELT_DEG, color="#1f70c1", linewidth=1.8, linestyle="--", label="+700 км от экватора", zorder=5)
+    ax.axhline(-BELT_DEG, color="#1f70c1", linewidth=1.8, linestyle="--", label="-700 км от экватора", zorder=5)
 
     for row in selected.itertuples(index=False):
         ax.text(
             row.label_x,
             row.label_y,
-            row.label,
+            country_label_ru(row.label),
             ha="center",
             va="center",
             fontsize=7.5,
@@ -70,9 +112,9 @@ def main() -> None:
             zorder=6,
         )
 
-    loaded_patch = mpatches.Patch(facecolor="#f2d59a", edgecolor="#9c650f", label="Road surface raw layer present")
-    missing_patch = mpatches.Patch(facecolor="#f2d59a", edgecolor="#8f1d1d", hatch="////", label="Missing road surface raw layer")
-    no_crop_patch = mpatches.Patch(facecolor="#f2d59a", edgecolor="#2f5597", hatch="\\\\\\\\", label="No crop candidates")
+    loaded_patch = mpatches.Patch(facecolor="#f2d59a", edgecolor="#9c650f", label="Есть слой типов дорог")
+    missing_patch = mpatches.Patch(facecolor="#f2d59a", edgecolor="#8f1d1d", hatch="////", label="Нет слоя типов дорог")
+    no_crop_patch = mpatches.Patch(facecolor="#f2d59a", edgecolor="#2f5597", hatch="\\\\\\\\", label="Нет кандидатов культур")
     handles, _ = ax.get_legend_handles_labels()
     handles.extend([loaded_patch, missing_patch, no_crop_patch])
     ax.legend(handles=handles, loc="lower left", frameon=True, fontsize=10)
@@ -80,9 +122,9 @@ def main() -> None:
     ax.set_xlim(args.xmin, args.xmax)
     ax.set_ylim(args.ymin, args.ymax)
     ax.set_aspect(args.aspect)
-    ax.set_xlabel("Longitude")
-    ax.set_ylabel("Latitude")
-    ax.set_title("Countries Within 700 km Of The Equator: Road Surface / Crop Input Status")
+    ax.set_xlabel("Долгота")
+    ax.set_ylabel("Широта")
+    ax.set_title("Страны в поясе 700 км от экватора:\nпокрытие дорог и наличие данных по культурам")
     ax.grid(alpha=0.18)
     fig.tight_layout()
 
